@@ -4,7 +4,7 @@ Plugin Name: Simple Comment Editing
 Plugin URI: http://wordpress.org/extend/plugins/simple-comment-editing/
 Description: Simple comment editing for your users.
 Author: ronalfy
-Version: 1.1.1
+Version: 1.1.2
 Requires at least: 3.5
 Author URI: http://www.ronalfy.com
 Contributors: ronalfy
@@ -141,16 +141,18 @@ class Simple_Comment_Editing {
 	 public function add_scripts() {
 	 	if ( !is_single() && !is_page() ) return;
 	 	
-	 	//Check if there are any cookies present, otherwise don't load the scripts
-	 	if ( !isset( $_COOKIE ) || empty( $_COOKIE ) ) return;
-	 	$has_cookie = false;
-	 	foreach( $_COOKIE as $cookie_name => $cookie_value ) {
-	 		if ( substr( $cookie_name , 0, 20 ) == 'SimpleCommentEditing' ) {
-				$has_cookie = true;
-				break;	 		
-	 		}
-	 	}
-	 	if ( !$has_cookie ) return;
+	 	//Check if there are any cookies present, otherwise don't load the scripts - WPAC_PLUGIN_NAME is for wp-ajaxify-comments (if the plugin is installed, load the JavaScript file)
+	 	if ( !defined( 'WPAC_PLUGIN_NAME' ) ) {
+		 	if ( !isset( $_COOKIE ) || empty( $_COOKIE ) ) return;
+		 	$has_cookie = false;
+		 	foreach( $_COOKIE as $cookie_name => $cookie_value ) {
+		 		if ( substr( $cookie_name , 0, 20 ) == 'SimpleCommentEditing' ) {
+					$has_cookie = true;
+					break;	 		
+		 		}
+		 	}
+		 	if ( !$has_cookie ) return;
+		 }
 	 	
 	 	
 	 	$main_script_uri = $this->get_plugin_url( '/js/simple-comment-editing.min.js' );
@@ -159,7 +161,7 @@ class Simple_Comment_Editing {
 	 			$main_script_uri = $this->get_plugin_url( '/js/simple-comment-editing.js' );
 	 		}
 	 	}
-	 	wp_enqueue_script( 'simple-comment-editing', $main_script_uri, array( 'jquery', 'wp-ajax-response' ), '20140205', true );
+	 	wp_enqueue_script( 'simple-comment-editing', $main_script_uri, array( 'jquery', 'wp-ajax-response' ), '20140414', true );
 	 	wp_localize_script( 'simple-comment-editing', 'simple_comment_editing', array(
 	 		'minutes' => __( 'minutes', 'sce' ),
 	 		'minute' => __( 'minute', 'sce' ),
